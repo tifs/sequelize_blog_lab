@@ -18,7 +18,7 @@ it if you wish.
 ## How to get started
 
 1. `npm init` your project folder.
-2. Specify the necessary dependencies with `npm install --save LIBRARY_NAME`.
+2. Specify the necessary dependencies with `npm install --save LIBRARY_NAME(S)`.
 3. Create the `Author` and `Post` models and migrations using
    `Sequelize`.
 4. Setup relationships between `Author` and `Post`.
