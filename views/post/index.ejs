@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<h1>READ ALL THE POSTS!</h1>
+  	
+  	<a href="/posts/new">Add a new Post!</a>
+  	<% allPosts.forEach(function(post){ %>
+  		<p><%= post.title %> by <%= post.author %></p>
+  		<form action="/posts/<%= post.id %>?_method=delete" method="post">
+			<input type="submit" value="Delete">
+		</form>
+		<a href="/posts/<%= post.id %>/edit">Edit</a>
+  	<% }); %>
+</body>
+</html>
