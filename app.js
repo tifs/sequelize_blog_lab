@@ -3,8 +3,10 @@
 var express = require('express'),
 	app = express(),
 	bodyParser = require('body-parser'),
-	methodOverride = ('method-override'),
+	methodOverride = require('method-override'),
 	db = require('./models/index');
+
+  require("locus");
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
@@ -13,7 +15,7 @@ app.use(methodOverride('_method'));
 
 //Home
 app.get('/', function(req,res){
-	res.render('posts');
+	res.render('posts/index');
 });
 
 
@@ -21,39 +23,40 @@ app.get('/', function(req,res){
 
 //Index
 app.get('/authors', function(req,res){
-	db.Author.findAll().done(function(err,posts){
-		res.render('author/index', {allAuthors: author});
+	db.Author.findAll().done(function(err,authors){
+		res.render('authors/index', {allAuthors: authors});
 	});
 });
 
 //New
 app.get('/authors/new', function(req,res){
-	res.render('author/new');
+	res.render('authors/new');
 });
 
 
 //Create
 app.post('/authors', function(req,res){
 	db.Author.create({
-		name: req.body.post.name,
+		name: req.body.author.name,
 	}).done(function(err){
 		if(err){
 			var errMsg = "Something went wrong!";
 			res.render('authors/new', {errMsg:errMsg});
 		}
 	else {
-		res.redirect('/author/index');
+		res.redirect('/authors');
 	}
 	});
 });
 
 
 //Show
-app.get('/authors/:id/books', function(req,res){
+app.get('/authors/:id/posts', function(req,res){
 	var id = req.params.id;
 	db.Author.find(id).done(function(err,author){
 		author.getPosts().done(function(err,posts){
-		res.render('author/show', {allPosts:posts,author:author});
+      // eval(locus)
+		res.render('authors/show', {allPosts:posts,author:author});
 		});
 	});
 });
@@ -63,13 +66,13 @@ app.get('/authors/:id/books', function(req,res){
 app.get('/authors/:id/edit', function(req,res){
 	var id = req.params.id;
 	db.Author.find(id).done(function(err,author){
-		res.render('author/edit', {author:author});
+		res.render('authors/edit', {author:author});
 	});
 });
 
 
 // Update
-app.put('authors/:id', function(req,res){
+app.put('/authors/:id', function(req,res){
 	var id = req.params.id;
 	db.Author.find(id).done(function(err,author){
 		author.updateAttributes({
@@ -80,6 +83,22 @@ app.put('authors/:id', function(req,res){
 	});
 });
 
+//Delete
+app.delete('/authors/:id', function(req,res){
+  var id = req.params.id;
+  db.Author.find(id).done(function(err,author){      
+    db.Post.destroy({
+      where:{
+        AuthorId:author.id
+      }
+    }).done(function(err){
+        author.destroy().done(function(err){
+        res.redirect('/authors');
+      });  
+    });
+  });
+});
+
 
 
 //////////	POST ROUTES	//////////
@@ -88,39 +107,40 @@ app.put('authors/:id', function(req,res){
 //Index
 app.get('/posts', function(req,res){
 	db.Post.findAll().done(function(err,posts){
-		res.render('post/index', {allPosts: posts});
+		res.render('posts/index', {allPosts: posts});
 	});
 });
 
 //New
 app.get('/posts/:id/new', function(req,res){
-	res.render('post/new', {id:id,title:"",body:""});
+  var id = req.params.id;
+	res.render('posts/new', {id:id});
 });
 
 
 //Create
-app.post('/posts/:id', function(req,res){
+app.post('/posts', function(req,res){
 	db.Post.create({
 		title: req.body.post.title,
-		body: req.body.post.body
+		body: req.body.post.body,
+    AuthorId: req.body.post.AuthorId
 	}).done(function(err){
 		if(err){
 			var errMsg = "Something went wrong!";
-			res.render('post/new', {errMsg:errMsg,title:title,body:body});
+			res.render('posts/new', {errMsg:errMsg,title:post.title,body:post.body});
 		}
 	else {
-		res.redirect('/index');
+		res.redirect('/posts');
 	}
 	});
 });
 
 
 //Show
-app.get('/posts/:id/', function(req,res){
+app.get('/posts/:id/', function(req,res){	
 	var id = req.params.id;
 	db.Post.find(id).done(function(err,post){
-		res.render('post/show', {title:title,body:body});
-		});
+		res.render('posts/show', {title:post.title,body:post.body});
 	});
 });
 
@@ -129,13 +149,13 @@ app.get('/posts/:id/', function(req,res){
 app.get('/posts/:id/edit', function(req,res){
 	var id = req.params.id;
 	db.Post.find(id).done(function(err,post){
-		res.render('author/edit', {title:title});
+		res.render('posts/edit', {post:post});
 	});
 });
 
 
 // Update
-app.put('posts/:id', function(req,res){
+app.put('/posts/:id', function(req,res){
 	var id = req.params.id;
 	db.Post.find(id).done(function(err,post){
 		post.updateAttributes({
@@ -146,3 +166,16 @@ app.put('posts/:id', function(req,res){
 		});
 	});
 });
+
+// Delete
+app.delete('/posts/:id', function(req,res){
+  var id = req.params.id;
+  db.Post.find(id).done(function(err,post){
+    post.destroy().done(function(err){
+      res.redirect('/posts');
+    });
+  });
+});
+
+
+app.listen(3000);

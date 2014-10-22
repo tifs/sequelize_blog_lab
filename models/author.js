@@ -5,8 +5,8 @@ module.exports = function(sequelize, DataTypes) {
     name: DataTypes.STRING
   }, {
     classMethods: {
-      associate: function(db) {
-        Author.hasMany(db.Post);
+      associate: function(models) {
+        models.Author.hasMany(models.Post);
       }
     }
   });

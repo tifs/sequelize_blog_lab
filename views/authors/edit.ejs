@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<h1>Edit an author!</h1>
+	<% if (typeof errMsg !== 'undefined') { %>
+		<h3 style = "color:red;">
+		<%= errMsg %>
+		</h3>
+	<% } %>
+
+	<form action="/authors/<%= author.id %>?_method=put" method="post">
+		<input name="author[name]" value="<%= author.name %>">
+		<input type="submit" value="Save">
+	</form>
+</body>
+</html>

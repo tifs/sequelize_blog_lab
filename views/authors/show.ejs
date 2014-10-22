@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<a href="/posts/<%= author.id%>/new">Add a new book</a>
+
+	<h1>Read all of <%= author.name%>'s posts</h1>
+
+	<% allPosts.forEach(function(post){ %>
+	<p>
+	<%= post.title %>
+	<br>
+	<%= post.body%>
+	<br>
+	<a href="/posts/<%= post.id %>/edit">Edit this post</a>
+	</p>
+
+	<form action="/posts/<%= post.id %>?_method=delete" method="post">
+	<input type="submit" value="Delete this post">
+	</form>
+	<% }); %>
+	<p>
+		<br>
+  		<a href="/authors">See all authors</a>
+		<br>
+  		<a href="/posts">See all posts</a>
+	</p>
+</body>
+</html>

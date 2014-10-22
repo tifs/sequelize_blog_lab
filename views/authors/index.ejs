@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<h1>Look at all these authors!</h1>
+	<a href="/authors/new">Add a new author</a>
+	<% allAuthors.forEach(function(author,index){ %>
+		<h2><%= index +1%> - <%= author.name %></h2>
+		<a href="/posts/<%= author.id%>/new">Add a new post</a>
+		<br>
+		<a href="/authors/<%= author.id%>/posts">Read all <%= author.name %>'s posts</a>
+		<br>
+		<a href="/authors/<%= author.id%>/edit">Edit</a>
+		<form action="/authors/<%= author.id %>?_method=delete" method="post">
+			<input type="submit" value="Delete">
+		</form>
+	<% }); %>
+</body>
+</html>

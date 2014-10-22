@@ -25,7 +25,6 @@ Object.keys(db).forEach(function(modelName) {
   }
 });
 
-eval(locus)
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
